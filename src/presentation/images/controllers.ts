@@ -1,16 +1,13 @@
 import { Request, Response } from "express";
-import { cloudinary } from "../../config/cloudinary";
+import { GetImages, ImageRepository } from "../../domain";
 
 export class ImagesControllers {
-  public getImages = (_req: Request, res: Response) => {
-    try {
-      cloudinary.api
-        .resources_by_asset_folder("la-muda")
-        .then((res) => console.log(res));
-
-      res.status(200).send({ message: "papui" });
-    } catch (error) {
-      res.status(500).send({ error });
-    }
+  constructor(private readonly imageRepository: ImageRepository) {}
+  public getImages = async (req: Request, res: Response) => {
+    const { image } = req.params;
+    new GetImages(this.imageRepository)
+      .execute(image)
+      .then((resp) => res.status(200).send(resp))
+      .catch((err) => res.status(500).send(err));
   };
 }

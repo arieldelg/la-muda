@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { NotesRoutes } from "./notes/routes";
+import { ReviewRoutes } from "./reviews/routes";
 import { ImagesRoutes } from "./images/routes";
 export class AppRoutes {
   static get routes() {
     const router = Router();
-    router.use("/api", NotesRoutes.routes);
-    router.use("/images", ImagesRoutes.routes);
+    router.use("/review", ReviewRoutes.routes);
+    router.use("/image", ImagesRoutes.routes);
     return router;
   }
 }

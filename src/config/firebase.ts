@@ -1,4 +1,5 @@
 import * as admin from "firebase-admin";
+import { WriteResult } from "firebase-admin/firestore";
 
 if (process.env.STAGE === "prod") {
   admin.initializeApp({
@@ -17,4 +18,4 @@ if (process.env.STAGE === "prod") {
 
 const db = admin.firestore();
 
-export { db };
+export { db, WriteResult };
