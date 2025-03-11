@@ -20,6 +20,8 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "cloudinary": "^2.5.1",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "firebase-admin": "^13.2.0"
   }
