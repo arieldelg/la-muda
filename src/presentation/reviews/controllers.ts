@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-import { AddReview, GetReview, ReviewsRepository } from "../../domain";
+import {
+  AddReview,
+  GetReview,
+  GetReviews,
+  ReviewsRepository,
+} from "../../domain";
 import { OptionsReview, ReviewPagination } from "../../types/reviews.type";
 import { CustomErrors } from "../../domain/errors/custom.errors";
 
@@ -12,10 +17,11 @@ export class ReviewControllers {
 
     res.status(500).send(err);
   }
-  public review = async (req: Request, res: Response) => {
+
+  public reviews = async (req: Request, res: Response) => {
     const { limit = 10, offset = "" } =
       req.query as unknown as ReviewPagination;
-    new GetReview(this.reviewRepository)
+    new GetReviews(this.reviewRepository)
       .execute({ limit, offset })
       .then((resp) => res.status(200).send(resp))
       .catch((err) => this.handleError(err, res));
@@ -32,6 +38,14 @@ export class ReviewControllers {
         tags,
         title,
       })
+      .then((resp) => res.status(200).send(resp))
+      .catch((err) => this.handleError(err, res));
+  };
+
+  public review = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    new GetReview(this.reviewRepository)
+      .execute(id)
       .then((resp) => res.status(200).send(resp))
       .catch((err) => this.handleError(err, res));
   };

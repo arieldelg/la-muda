@@ -11,7 +11,8 @@ export class ReviewRoutes {
     const reviewRepository = new ReviewsRepositoryImp(reviewDatasource);
     const reviewControllers = new ReviewControllers(reviewRepository);
 
-    routes.get("/", reviewControllers.review);
+    routes.get("/", reviewControllers.reviews);
+    routes.get("/:id");
     routes.post("/", ReviewService.validateValue, reviewControllers.addReview);
     return routes;
   }

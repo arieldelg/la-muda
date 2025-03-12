@@ -52,4 +52,17 @@ export class ReviewDatasourceImp implements ReviewsDatasource {
       throw CustomErrors.InternalErrorServer("Something Went Wrong" + error);
     }
   }
+
+  async getReview(id: string): Promise<ReviewEntity> {
+    try {
+      const snap = await db.collection("task").doc(id).get();
+      return ReviewEntity.fromFirebaseToClient({
+        data: snap.data(),
+        id: snap.id,
+      });
+    } catch (error) {
+      if (error instanceof CustomErrors) throw error;
+      throw CustomErrors.InternalErrorServer("Something Went Wrong" + error);
+    }
+  }
 }

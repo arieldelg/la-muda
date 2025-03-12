@@ -16,4 +16,7 @@ export class ReviewsRepositoryImp implements ReviewsRepository {
   ): Promise<{ total: number; reviews: ReviewEntity[] }> {
     return this.reviewDatasource.getReviews(paginationReview);
   }
+  async getReview(id: string): Promise<ReviewEntity> {
+    return this.reviewDatasource.getReview(id);
+  }
 }

@@ -7,4 +7,5 @@ export abstract class ReviewsDatasource {
   abstract getReviews(
     paginationReview: ReviewPagination
   ): Promise<{ total: number; reviews: ReviewEntity[] }>;
+  abstract getReview(id: string): Promise<ReviewEntity>;
 }
