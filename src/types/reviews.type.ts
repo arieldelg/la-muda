@@ -19,3 +19,17 @@ export interface ReviewFirebase {
   id: string;
   data: any;
 }
+
+export type SecurityKeys = "image" | "badge" | "description" | "tags" | "title";
+
+interface Value {
+  image: string[];
+}
+
+export const reviewObject: Record<SecurityKeys, string> = {
+  image: "object",
+  description: "string",
+  title: "string",
+  tags: "object",
+  badge: "string",
+};
