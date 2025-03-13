@@ -47,6 +47,7 @@ export class ReviewControllers {
   public updateReview = (req: Request, res: Response) => {
     const { id } = req.params;
     const body = req.body;
+
     new UpdateReview(this.reviewRepository)
       .execute(id, body)
       .then((resp) => res.status(200).send(resp))
