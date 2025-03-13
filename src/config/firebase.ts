@@ -12,13 +12,10 @@ if (process.env.STAGE === "prod") {
     projectId: process.env.PROJECT_ID,
   });
 } else if (process.env.STAGE === "dev") {
-  console.log("ayuda2");
-
   admin.initializeApp({
     credential: admin.credential.cert("./lamudaCredentials.json"),
   });
 } else if (process.env.STAGE === "test") {
-  console.log("ayuda");
   process.env.FIRESTORE_EMULATOR_HOST = "127.0.0.1:8080";
   admin.initializeApp({
     projectId: process.env.PROJECT_ID,

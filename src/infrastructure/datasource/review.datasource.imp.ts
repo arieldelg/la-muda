@@ -51,7 +51,6 @@ export class ReviewDatasourceImp implements ReviewsDatasource {
           id: doc.id,
         })
       );
-
       return {
         total,
         reviews,

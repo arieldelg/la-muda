@@ -8,7 +8,7 @@ export class ReviewEntity {
   public badge: string;
   public description: string;
   public id: string;
-  public image?: string[];
+  public images?: string[];
   public tags: string[];
   public title: string;
 
@@ -16,7 +16,7 @@ export class ReviewEntity {
     this.badge = badge;
     this.description = description;
     this.id = id;
-    this.image = images;
+    this.images = images;
     this.tags = tags;
     this.title = title;
   }
