@@ -14,6 +14,7 @@ export class ReviewRoutes {
     routes.get("/", reviewControllers.reviews);
     routes.get("/:id");
     routes.post("/", ReviewService.validateValue, reviewControllers.addReview);
+    routes.put("/:id", reviewControllers.updateReview);
     return routes;
   }
 }

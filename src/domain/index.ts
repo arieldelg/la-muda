@@ -1,5 +1,6 @@
 export { ReviewEntity } from "./entities/review.entity";
 
+export { UpdateReview } from "./use-cases.ts/review/update-review";
 export { GetReviews } from "./use-cases.ts/review/get-reviews";
 export { GetReview } from "./use-cases.ts/review/get-review";
 export { AddReview } from "./use-cases.ts/review/add-review";

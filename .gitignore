@@ -2,3 +2,4 @@
 node_modules
 lamudaCredentials.json
 dist
+firebase-debug.log

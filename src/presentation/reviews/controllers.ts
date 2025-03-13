@@ -4,15 +4,17 @@ import {
   GetReview,
   GetReviews,
   ReviewsRepository,
+  UpdateReview,
 } from "../../domain";
-import { OptionsReview, ReviewPagination } from "../../types/reviews.type";
+import { ReviewPagination } from "../../types/reviews.type";
 import { CustomErrors } from "../../domain/errors/custom.errors";
 
 export class ReviewControllers {
   constructor(private readonly reviewRepository: ReviewsRepository) {}
   private handleError(err: any, res: Response) {
     if (err instanceof CustomErrors) {
-      res.status(err.statusCode).send(err.message);
+      res.status(err.statusCode).send({ ok: false, message: err.message });
+      return;
     }
 
     res.status(500).send(err);
@@ -28,16 +30,8 @@ export class ReviewControllers {
   };
 
   public addReview = (req: Request, res: Response) => {
-    const { badge, description, image, tags, title } =
-      req.body as OptionsReview;
     new AddReview(this.reviewRepository)
-      .execute({
-        badge,
-        description,
-        image,
-        tags,
-        title,
-      })
+      .execute(req.body)
       .then((resp) => res.status(200).send(resp))
       .catch((err) => this.handleError(err, res));
   };
@@ -46,6 +40,15 @@ export class ReviewControllers {
     const { id } = req.params;
     new GetReview(this.reviewRepository)
       .execute(id)
+      .then((resp) => res.status(200).send(resp))
+      .catch((err) => this.handleError(err, res));
+  };
+
+  public updateReview = (req: Request, res: Response) => {
+    const { id } = req.params;
+    const body = req.body;
+    new UpdateReview(this.reviewRepository)
+      .execute(id, body)
       .then((resp) => res.status(200).send(resp))
       .catch((err) => this.handleError(err, res));
   };

@@ -2,8 +2,16 @@ export interface OptionsReview {
   title: string;
   description: string;
   tags: string[];
-  image: string[];
+  images?: string[];
   badge: string;
+}
+
+export interface OptionsReviewUpdate {
+  title?: string;
+  description?: string;
+  tags?: string[];
+  images?: string[];
+  badge?: string;
 }
 
 export interface Review extends OptionsReview {
@@ -20,14 +28,15 @@ export interface ReviewFirebase {
   data: any;
 }
 
-export type SecurityKeys = "image" | "badge" | "description" | "tags" | "title";
-
-interface Value {
-  image: string[];
-}
+export type SecurityKeys =
+  | "images"
+  | "badge"
+  | "description"
+  | "tags"
+  | "title";
 
 export const reviewObject: Record<SecurityKeys, string> = {
-  image: "object",
+  images: "object",
   description: "string",
   title: "string",
   tags: "object",

@@ -1,22 +1,31 @@
 import { db, WriteResult } from "../../config/firebase";
 import { ReviewEntity, ReviewsDatasource } from "../../domain";
 import { CustomErrors } from "../../domain/errors/custom.errors";
-import { OptionsReview, ReviewPagination } from "../../types/reviews.type";
+import {
+  OptionsReview,
+  OptionsReviewUpdate,
+  ReviewPagination,
+} from "../../types/reviews.type";
 
 export class ReviewDatasourceImp implements ReviewsDatasource {
+  private handleError(error: any) {
+    if (error instanceof CustomErrors) return error;
+    return CustomErrors.InternalErrorServer("Something Went Wrong" + error);
+  }
+
   addReview(review: OptionsReview): Promise<WriteResult> {
     try {
       const document = db.collection("review").doc();
       if (!document.id) {
         throw CustomErrors.InternalErrorServer("Review couldn't be created");
       }
+
       return document.set({
         ...review,
         id: document.id,
       });
     } catch (error) {
-      if (error instanceof CustomErrors) throw error;
-      throw CustomErrors.InternalErrorServer("Something Went Wrong" + error);
+      throw this.handleError(error);
     }
   }
 
@@ -48,8 +57,7 @@ export class ReviewDatasourceImp implements ReviewsDatasource {
         reviews,
       };
     } catch (error) {
-      if (error instanceof CustomErrors) throw error;
-      throw CustomErrors.InternalErrorServer("Something Went Wrong" + error);
+      throw this.handleError(error);
     }
   }
 
@@ -61,8 +69,16 @@ export class ReviewDatasourceImp implements ReviewsDatasource {
         id: snap.id,
       });
     } catch (error) {
-      if (error instanceof CustomErrors) throw error;
-      throw CustomErrors.InternalErrorServer("Something Went Wrong" + error);
+      throw this.handleError(error);
+    }
+  }
+
+  updateReview(id: string, reviewUpdate: any): Promise<WriteResult> {
+    try {
+      const snap = db.collection("review").doc(id).update(reviewUpdate);
+      return snap;
+    } catch (error) {
+      throw this.handleError(error);
     }
   }
 }

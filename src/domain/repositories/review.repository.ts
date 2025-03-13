@@ -8,4 +8,5 @@ export abstract class ReviewsRepository {
     paginationReview: ReviewPagination
   ): Promise<{ total: number; reviews: ReviewEntity[] }>;
   abstract getReview(id: string): Promise<ReviewEntity>;
+  abstract updateReview(id: string, reviewUpdate: any): Promise<WriteResult>;
 }
