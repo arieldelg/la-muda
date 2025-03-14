@@ -1,29 +1,13 @@
+import { streamFileUpload } from "../../config";
 import { cloudinary } from "../../config/cloudinary";
 import { ImageDatasource } from "../../domain";
 import { CustomErrors } from "../../domain/errors/custom.errors";
 import { Resource, FileList, ImageResponse } from "../../types/images.types";
-import fs from "fs";
 
 export class ImageDatasourceImp implements ImageDatasource {
   private handleError(error: any) {
     if (error instanceof CustomErrors) return error;
     return CustomErrors.InternalErrorServer("Something Went Wrong" + error);
-  }
-
-  private async helperSaveFoto(file: FileList): Promise<ImageResponse> {
-    const data = await cloudinary.uploader.upload(file.path);
-    return {
-      url: data.secure_url,
-      id: data.public_id,
-    };
-  }
-
-  private handleDeleteUploadFolder(file: FileList) {
-    if (fs.existsSync(file.path)) {
-      fs.unlink(file.path, (err) => {
-        if (err) console.log(err);
-      });
-    }
   }
 
   async getImages(imageId: string): Promise<Resource> {
@@ -42,7 +26,31 @@ export class ImageDatasourceImp implements ImageDatasource {
     }
   }
 
-  async uploadImages(files: FileList[]): Promise<ImageResponse[]> {
+  uploadImages(files: FileList[]): Promise<ImageResponse[]> {
+    return streamFileUpload(files);
+  }
+}
+
+/**
+ * ! Using Cloudinary
+ private async helperSaveFoto(file: FileList): Promise<ImageResponse> {
+    const data = await cloudinary.uploader.upload(file.path);
+    return {
+      url: data.secure_url,
+      id: data.public_id,
+    };
+  }
+
+  private handleDeleteUploadFolder(file: FileList) {
+    if (fs.existsSync(file.path)) {
+      fs.unlink(file.path, (err) => {
+        if (err) console.log(err);
+      });
+    }
+  } 
+    
+ async uploadImages(files: FileList[]): Promise<ImageResponse[]> {
+    
     try {
       const promiseArray = [];
       for (const file of files) {
@@ -60,4 +68,5 @@ export class ImageDatasourceImp implements ImageDatasource {
       throw this.handleError(error);
     }
   }
-}
+  
+ */

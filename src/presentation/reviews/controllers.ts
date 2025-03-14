@@ -5,9 +5,9 @@ import {
   GetReviews,
   ReviewsRepository,
   UpdateReview,
+  CustomErrors,
 } from "../../domain";
 import { ReviewPagination } from "../../types/reviews.type";
-import { CustomErrors } from "../../domain/errors/custom.errors";
 
 export class ReviewControllers {
   constructor(private readonly reviewRepository: ReviewsRepository) {}

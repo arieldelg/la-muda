@@ -38,4 +38,5 @@ export interface FileList {
   filename: string;
   path: string;
   size: number;
+  buffer: any;
 }

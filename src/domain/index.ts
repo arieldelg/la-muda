@@ -1,3 +1,5 @@
+export { CustomErrors } from "./errors/custom.errors";
+
 export { ReviewEntity } from "./entities/review.entity";
 
 export { UploadImg } from "./use-cases.ts/images/upload-image";

@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
-import { GetImages, ImageRepository, UploadImg } from "../../domain";
+import {
+  GetImages,
+  ImageRepository,
+  CustomErrors,
+  UploadImg,
+} from "../../domain";
 import { FileList } from "../../types/images.types";
-import { CustomErrors } from "../../domain/errors/custom.errors";
+import { streamFileUpload } from "../../config/cloudStorage";
 
 export class ImagesControllers {
   constructor(private readonly imageRepository: ImageRepository) {}
@@ -22,9 +27,13 @@ export class ImagesControllers {
       .catch((err) => this.handleError(err, res));
   };
 
-  public uploadImages = (req: Request, res: Response) => {
+  public uploadImages = async (req: Request, res: Response) => {
     const files = req.files as FileList[];
-    console.log(files);
+    if (!files || files.length === 0) {
+      res.status(400).send("No files uploaded.");
+      return;
+    }
+
     new UploadImg(this.imageRepository)
       .execute(files)
       .then((resp) => res.status(200).send(resp))

@@ -23,6 +23,7 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.15.2",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

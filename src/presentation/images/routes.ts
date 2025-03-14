@@ -11,7 +11,7 @@ export class ImagesRoutes {
     const imagesControllers = new ImagesControllers(repository);
 
     router.get("/:image", imagesControllers.getImages);
-    router.post("/", upload.array("files"), imagesControllers.uploadImages);
+    router.post("/", upload, imagesControllers.uploadImages);
     return router;
   }
 }
