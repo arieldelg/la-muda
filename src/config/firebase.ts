@@ -23,5 +23,5 @@ if (process.env.STAGE === "prod") {
 }
 
 const db = admin.firestore();
-
-export { db, WriteResult };
+const timeStamp = admin.firestore.FieldValue.serverTimestamp();
+export { db, WriteResult, timeStamp };

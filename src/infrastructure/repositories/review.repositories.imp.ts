@@ -9,7 +9,9 @@ import { OptionsReview, ReviewPagination } from "../../types/reviews.type";
 export class ReviewsRepositoryImp implements ReviewsRepository {
   constructor(private readonly reviewDatasource: ReviewsDatasource) {}
 
-  async addReview(review: OptionsReview): Promise<WriteResult> {
+  async addReview(
+    review: OptionsReview
+  ): Promise<{ ok: boolean; data: ReviewEntity }> {
     return this.reviewDatasource.addReview(review);
   }
   async getReviews(

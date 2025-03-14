@@ -1,11 +1,7 @@
-import { db, WriteResult } from "../../config/firebase";
+import { db, timeStamp, WriteResult } from "../../config/firebase";
 import { ReviewEntity, ReviewsDatasource } from "../../domain";
 import { CustomErrors } from "../../domain/errors/custom.errors";
-import {
-  OptionsReview,
-  OptionsReviewUpdate,
-  ReviewPagination,
-} from "../../types/reviews.type";
+import { OptionsReview, ReviewPagination } from "../../types/reviews.type";
 
 export class ReviewDatasourceImp implements ReviewsDatasource {
   private handleError(error: any) {
@@ -13,16 +9,27 @@ export class ReviewDatasourceImp implements ReviewsDatasource {
     return CustomErrors.InternalErrorServer("Something Went Wrong" + error);
   }
 
-  addReview(review: OptionsReview): Promise<WriteResult> {
+  addReview(
+    review: OptionsReview
+  ): Promise<{ ok: boolean; data: ReviewEntity }> {
     try {
       const document = db.collection("review").doc();
       if (!document.id) {
         throw CustomErrors.InternalErrorServer("Review couldn't be created");
       }
 
-      return document.set({
+      document.set({
         ...review,
         id: document.id,
+      });
+      const newReview = ReviewEntity.Review({
+        ...review,
+        id: document.id,
+      });
+
+      return Promise.resolve({
+        ok: true,
+        data: newReview,
       });
     } catch (error) {
       throw this.handleError(error);
@@ -75,6 +82,10 @@ export class ReviewDatasourceImp implements ReviewsDatasource {
   updateReview(id: string, reviewUpdate: any): Promise<WriteResult> {
     try {
       const snap = db.collection("review").doc(id).update(reviewUpdate);
+      db.collection("review").doc(id).update({
+        timestamp: timeStamp,
+      });
+
       return snap;
     } catch (error) {
       throw this.handleError(error);

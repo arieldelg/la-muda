@@ -7,6 +7,11 @@ export interface ImagesResponse {
   rate_limit_remaining: number;
 }
 
+export interface ImageResponse {
+  url: string;
+  id: string;
+}
+
 export interface Resource {
   asset_id: string;
   public_id: string;
@@ -22,4 +27,15 @@ export interface Resource {
   display_name: string;
   url: string;
   secure_url: string;
+}
+
+export interface FileList {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
 }

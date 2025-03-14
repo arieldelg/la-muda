@@ -33,4 +33,8 @@ export class ReviewEntity {
       title,
     });
   }
+
+  public static Review(review: Review) {
+    return new ReviewEntity(review);
+  }
 }
