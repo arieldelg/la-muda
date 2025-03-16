@@ -5,6 +5,15 @@ import { ImageResponse } from "../../types/images.types";
 
 export class ReviewService {
   private static newReqBody = {};
+  private static createErrorResponse(message: string): {
+    ok: boolean;
+    message: string;
+  } {
+    return {
+      ok: false,
+      message,
+    };
+  }
 
   private static checkEmptyObject(body: any): { ok: boolean; message: string } {
     if (Object.keys(body).length === 0) {
@@ -52,62 +61,33 @@ export class ReviewService {
     body: string[] | ImageResponse[],
     key: SecurityKeys
   ) {
-    if (body === undefined) {
-      return {
-        ok: false,
-        message: `Missing property ${key}`,
-      };
-    }
-
-    if (body.length === 0) {
-      return {
-        ok: false,
-        message: `Empty value in property ${key}`,
-      };
+    if (this.isBodyInvalid(body)) {
+      return this.createErrorResponse(`Property ${body} is missing/empty`);
     }
 
     if (!Array.isArray(body)) {
-      return {
-        ok: false,
-        message: `${key} is not an Array`,
-      };
+      return this.createErrorResponse(`${key} is not an Array`);
     }
 
     let isValid: boolean = true;
     let newValueArray: { url: string; id: string }[] = [];
     for (const item of body) {
       if (key === "tags") {
-        const itemTags = item as string;
-        if (itemTags.length === 0 || typeof itemTags !== "string") {
-          isValid = false;
-        }
+        isValid = this.validateTags(item as string);
       }
 
       if (key === "images") {
-        const itemImages = item as ImageResponse;
-        const response = this.checkObject(itemImages, {
-          url: "string",
-          id: "string",
-        });
-
+        const response = this.validateImages(item as ImageResponse);
         if (!response.ok) {
           isValid = response.ok;
           break;
         }
-
-        isValid = response.ok;
         newValueArray.push(response.data!);
       }
     }
 
     if (!isValid) {
-      return {
-        ok: false,
-        message:
-          key === "images"
-            ? `${key} is not an image`
-            : `${key} array contains invalid values (should be non-empty strings)`,
-      };
+      return this.createInvalidArrayResponse(key);
     }
 
     if (key === "images") {
@@ -117,6 +97,31 @@ export class ReviewService {
     return {
       ok: true,
       message: "property's and Values accepted",
+    };
+  }
+
+  private static isBodyInvalid(body: string[] | ImageResponse[]) {
+    return body === undefined || body.length === 0;
+  }
+
+  private static validateTags(itemTags: string) {
+    return !(itemTags.length === 0 || typeof itemTags !== "string");
+  }
+
+  private static validateImages(itemImages: ImageResponse) {
+    return this.checkObject(itemImages, {
+      url: "string",
+      id: "string",
+    });
+  }
+
+  private static createInvalidArrayResponse(key: SecurityKeys) {
+    return {
+      ok: false,
+      message:
+        key === "images"
+          ? `${key} is not an image`
+          : `${key} array contains invalid values (should be non-empty strings)`,
     };
   }
 
