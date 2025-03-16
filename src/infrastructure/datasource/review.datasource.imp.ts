@@ -1,12 +1,16 @@
 import { db, timeStamp, WriteResult } from "../../config/firebase";
 import { ReviewEntity, ReviewsDatasource } from "../../domain";
 import { CustomErrors } from "../../domain/errors/custom.errors";
-import { OptionsReview, ReviewPagination } from "../../types/reviews.type";
+import {
+  DefaultResponse,
+  OptionsReview,
+  ReviewPagination,
+} from "../../types/reviews.type";
 
 export class ReviewDatasourceImp implements ReviewsDatasource {
   private handleError(error: any) {
     if (error instanceof CustomErrors) return error;
-    return CustomErrors.InternalErrorServer("Something Went Wrong" + error);
+    return CustomErrors.InternalErrorServer("Something Went Wrong " + error);
   }
 
   addReview(
@@ -69,7 +73,7 @@ export class ReviewDatasourceImp implements ReviewsDatasource {
 
   async getReview(id: string): Promise<ReviewEntity> {
     try {
-      const snap = await db.collection("task").doc(id).get();
+      const snap = await db.collection("review").doc(id).get();
       return ReviewEntity.fromFirebaseToClient({
         data: snap.data(),
         id: snap.id,
@@ -79,16 +83,21 @@ export class ReviewDatasourceImp implements ReviewsDatasource {
     }
   }
 
-  updateReview(id: string, reviewUpdate: any): Promise<WriteResult> {
-    try {
-      const snap = db.collection("review").doc(id).update(reviewUpdate);
-      db.collection("review").doc(id).update({
-        timestamp: timeStamp,
+  updateReview(id: string, reviewUpdate: any): Promise<DefaultResponse> {
+    // console.log(reviewUpdate);
+    const snap = db
+      .collection("review")
+      .doc(id)
+      .update(reviewUpdate)
+      .then(() => {
+        db.collection("review").doc(id).update({
+          timestamp: timeStamp,
+        });
+        return { ok: true, message: "Review updated success" };
+      })
+      .catch((resp) => {
+        throw CustomErrors.NotFound(resp.details);
       });
-
-      return snap;
-    } catch (error) {
-      throw this.handleError(error);
-    }
+    return snap;
   }
 }

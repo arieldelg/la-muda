@@ -4,7 +4,11 @@ import {
   ReviewsDatasource,
   ReviewsRepository,
 } from "../../domain";
-import { OptionsReview, ReviewPagination } from "../../types/reviews.type";
+import {
+  DefaultResponse,
+  OptionsReview,
+  ReviewPagination,
+} from "../../types/reviews.type";
 
 export class ReviewsRepositoryImp implements ReviewsRepository {
   constructor(private readonly reviewDatasource: ReviewsDatasource) {}
@@ -23,7 +27,7 @@ export class ReviewsRepositoryImp implements ReviewsRepository {
     return this.reviewDatasource.getReview(id);
   }
 
-  updateReview(id: string, reviewUpdate: any): Promise<WriteResult> {
+  updateReview(id: string, reviewUpdate: any): Promise<DefaultResponse> {
     return this.reviewDatasource.updateReview(id, reviewUpdate);
   }
 }

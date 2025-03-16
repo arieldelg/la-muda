@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { reviewObject, SecurityKeys } from "../../types/reviews.type";
 import { CustomErrors } from "../../domain/errors/custom.errors";
+import { ImageResponse } from "../../types/images.types";
 
 export class ReviewService {
   private static newReqBody = {};
@@ -18,27 +19,54 @@ export class ReviewService {
     };
   }
 
+  private static checkObject(
+    object: ImageResponse,
+    type: Record<string, string>
+  ) {
+    const acceptedValues = {} as { url: string; id: string };
+    for (const key of Object.keys(type)) {
+      const imageKeys = key as "id" | "url";
+      if (!object[imageKeys]) {
+        return {
+          ok: false,
+          message: `Missing property ${imageKeys} in array images`,
+        };
+      }
+      if (typeof object[imageKeys] !== type[imageKeys]) {
+        return {
+          ok: false,
+          message: `Invalid Values in property ${imageKeys}`,
+        };
+      }
+      Object.assign(acceptedValues, { [imageKeys]: object[imageKeys] });
+    }
+
+    return {
+      ok: true,
+      message: "Accepted Values in array",
+      data: acceptedValues,
+    };
+  }
+
   private static checkValuesArray(
-    body: Record<string, string>,
+    body: string[] | ImageResponse[],
     key: SecurityKeys
   ) {
-    const value = body[key];
-
-    if (value === undefined) {
+    if (body === undefined) {
       return {
         ok: false,
         message: `Missing property ${key}`,
       };
     }
 
-    if (value.length === 0) {
+    if (body.length === 0) {
       return {
         ok: false,
         message: `Empty value in property ${key}`,
       };
     }
 
-    if (!Array.isArray(value)) {
+    if (!Array.isArray(body)) {
       return {
         ok: false,
         message: `${key} is not an Array`,
@@ -46,16 +74,29 @@ export class ReviewService {
     }
 
     let isValid: boolean = true;
-    let regex = key === "images" ? /https:\/\/res/i : null;
-    for (const item of value) {
-      if (item.length === 0 || typeof item !== "string") {
-        isValid = false;
-        break;
+    let newValueArray: { url: string; id: string }[] = [];
+    for (const item of body) {
+      if (key === "tags") {
+        const itemTags = item as string;
+        if (itemTags.length === 0 || typeof itemTags !== "string") {
+          isValid = false;
+        }
       }
 
-      if (key === "images" && !regex?.test(item)) {
-        isValid = false;
-        break;
+      if (key === "images") {
+        const itemImages = item as ImageResponse;
+        const response = this.checkObject(itemImages, {
+          url: "string",
+          id: "string",
+        });
+
+        if (!response.ok) {
+          isValid = response.ok;
+          break;
+        }
+
+        isValid = response.ok;
+        newValueArray.push(response.data!);
       }
     }
 
@@ -67,6 +108,10 @@ export class ReviewService {
             ? `${key} is not an image`
             : `${key} array contains invalid values (should be non-empty strings)`,
       };
+    }
+
+    if (key === "images") {
+      Object.assign(this.newReqBody, { images: newValueArray });
     }
 
     return {
@@ -118,7 +163,8 @@ export class ReviewService {
       switch (key) {
         case "tags":
         case "images": {
-          const { ok, message } = this.checkValuesArray(body, key);
+          const checkBody = body[key] as unknown as string[] | ImageResponse[];
+          const { ok, message } = this.checkValuesArray(checkBody, key);
           if (!ok) {
             return {
               ok,

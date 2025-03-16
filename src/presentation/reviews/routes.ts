@@ -12,7 +12,7 @@ export class ReviewRoutes {
     const reviewControllers = new ReviewControllers(reviewRepository);
 
     routes.get("/", reviewControllers.reviews);
-    routes.get("/:id");
+    routes.get("/:id", reviewControllers.review);
     routes.post("/", ReviewService.validateValue, reviewControllers.addReview);
     routes.put(
       "/:id",

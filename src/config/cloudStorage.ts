@@ -29,7 +29,7 @@ export async function streamFileUpload(
   //* Create a stream for the file Buffer
 
   for (const file of files) {
-    const destFileName = file.originalname;
+    const destFileName = file.originalname.trim().split(" ").join("");
     const myBucket = storage.bucket(bucketName);
     const gcsFile = myBucket.file(`imagenes/${destFileName}`);
     //* create a writable stream to GCS
@@ -54,7 +54,7 @@ export async function streamFileUpload(
             console.log(`${destFileName} uploaded to ${bucketName}`);
             uploadedUrls.push({
               id: destFileName,
-              url: `https://storage.googleapis.com/${bucketName}/${destFileName}`,
+              url: `https://storage.googleapis.com/${bucketName}/imagenes/${destFileName}`,
             });
             resolve();
           });

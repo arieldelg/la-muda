@@ -42,3 +42,8 @@ export const reviewObject: Record<SecurityKeys, string> = {
   tags: "object",
   badge: "string",
 };
+
+export interface DefaultResponse {
+  ok: boolean;
+  message: string;
+}
